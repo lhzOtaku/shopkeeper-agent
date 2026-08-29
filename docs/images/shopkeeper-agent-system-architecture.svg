@@ -1,0 +1,188 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="960" viewBox="0 0 1280 960">
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a"/>
+    </marker>
+    <marker id="arrow-orange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ea580c"/>
+    </marker>
+    <marker id="arrow-slate" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+    <style>
+      .title { font: 700 30px -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #0f172a; }
+      .subtitle { font: 14px -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #475569; }
+      .layer-title { font: 700 21px -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #0f172a; }
+      .box-title { font: 700 17px -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #111827; }
+      .box-text { font: 14px -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #334155; }
+      .small { font: 12px -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #475569; }
+      .hint { font: 700 13px -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #0f766e; }
+      .layer { stroke-width: 3; rx: 22; }
+      .sub-layer { stroke-width: 2; rx: 18; stroke-dasharray: 6 6; }
+      .box { fill: #ffffff; stroke-width: 2; rx: 10; filter: drop-shadow(0 4px 7px rgba(15, 23, 42, 0.12)); }
+      .arrow-blue { stroke: #2563eb; stroke-width: 3; fill: none; marker-end: url(#arrow-blue); }
+      .arrow-green { stroke: #16a34a; stroke-width: 3; fill: none; marker-end: url(#arrow-green); }
+      .arrow-orange { stroke: #ea580c; stroke-width: 3; fill: none; marker-end: url(#arrow-orange); }
+      .arrow-slate { stroke: #475569; stroke-width: 2.5; fill: none; marker-end: url(#arrow-slate); }
+      .arrow-dash { stroke-dasharray: 8 7; }
+    </style>
+  </defs>
+
+  <rect width="1280" height="960" fill="#f8fafc"/>
+  <text x="640" y="42" text-anchor="middle" class="title">电商问数系统架构图</text>
+  <text x="640" y="70" text-anchor="middle" class="subtitle">两条主线：先构建元数据知识库，再用 LangGraph 串起 Jieba、Qdrant、Elasticsearch、MySQL、LLM 和 SSE 返回</text>
+
+  <!-- 用户交互层 -->
+  <rect x="24" y="94" width="1232" height="108" class="layer" fill="#dbeafe" stroke="#2563eb"/>
+  <text x="48" y="128" class="layer-title">用户交互层</text>
+  <rect x="292" y="122" width="230" height="56" class="box" stroke="#2563eb"/>
+  <text x="407" y="145" text-anchor="middle" class="box-title">React + Vite 前端</text>
+  <text x="407" y="166" text-anchor="middle" class="box-text">Tailwind CSS / SSE 消费</text>
+  <rect x="590" y="122" width="210" height="56" class="box" stroke="#2563eb"/>
+  <text x="695" y="145" text-anchor="middle" class="box-title">HTTP 查询请求</text>
+  <text x="695" y="166" text-anchor="middle" class="box-text">Fetch POST /api/query</text>
+  <rect x="868" y="122" width="250" height="56" class="box" stroke="#2563eb"/>
+  <text x="993" y="145" text-anchor="middle" class="box-title">SSE 流式展示</text>
+  <text x="993" y="166" text-anchor="middle" class="box-text">progress / result / error</text>
+
+  <!-- API layer -->
+  <rect x="24" y="224" width="1232" height="124" class="layer" fill="#ecfdf5" stroke="#16a34a"/>
+  <text x="48" y="258" class="layer-title">API 与服务编排层</text>
+  <rect x="78" y="282" width="210" height="50" class="box" stroke="#16a34a"/>
+  <text x="183" y="303" text-anchor="middle" class="box-title">main.py + lifespan</text>
+  <text x="183" y="322" text-anchor="middle" class="box-text">FastAPI lifespan</text>
+  <rect x="350" y="282" width="210" height="50" class="box" stroke="#16a34a"/>
+  <text x="455" y="303" text-anchor="middle" class="box-title">query_router.py</text>
+  <text x="455" y="322" text-anchor="middle" class="box-text">Pydantic + StreamingResponse</text>
+  <rect x="622" y="282" width="230" height="50" class="box" stroke="#16a34a"/>
+  <text x="737" y="303" text-anchor="middle" class="box-title">dependencies.py</text>
+  <text x="737" y="322" text-anchor="middle" class="box-text">Repository / Client 注入</text>
+  <rect x="914" y="282" width="230" height="50" class="box" stroke="#16a34a"/>
+  <text x="1029" y="303" text-anchor="middle" class="box-title">QueryService</text>
+  <text x="1029" y="322" text-anchor="middle" class="box-text">graph.astream -> SSE(data)</text>
+  <text x="48" y="360" class="small">工程追踪：ContextVar 注入 request_id，loguru 输出链路日志；FastAPI 依赖注入负责组装 Repository 与 Client</text>
+
+  <!-- Meta build layer -->
+  <rect x="24" y="370" width="1232" height="158" class="layer" fill="#fff7ed" stroke="#f97316"/>
+  <text x="48" y="404" class="layer-title">元数据知识库构建层</text>
+  <rect x="66" y="434" width="190" height="58" class="box" stroke="#f97316"/>
+  <text x="161" y="458" text-anchor="middle" class="box-title">教学数仓 MySQL</text>
+  <text x="161" y="480" text-anchor="middle" class="box-text">fact / dim 原始表</text>
+  <rect x="306" y="434" width="220" height="58" class="box" stroke="#f97316"/>
+  <text x="416" y="458" text-anchor="middle" class="box-title">meta_config.yaml</text>
+  <text x="416" y="480" text-anchor="middle" class="box-text">表字段 / 指标 / 同步配置</text>
+  <rect x="576" y="434" width="240" height="58" class="box" stroke="#f97316"/>
+  <text x="696" y="458" text-anchor="middle" class="box-title">MetaKnowledgeService</text>
+  <text x="696" y="480" text-anchor="middle" class="box-text">SQLAlchemy + Repository</text>
+  <rect x="866" y="418" width="160" height="42" class="box" stroke="#f97316"/>
+  <text x="946" y="437" text-anchor="middle" class="box-title">Meta MySQL</text>
+  <text x="946" y="454" text-anchor="middle" class="small">表/字段/指标</text>
+  <rect x="1046" y="418" width="160" height="42" class="box" stroke="#f97316"/>
+  <text x="1126" y="437" text-anchor="middle" class="box-title">Qdrant</text>
+  <text x="1126" y="454" text-anchor="middle" class="small">TEI/BGE 向量</text>
+  <rect x="956" y="474" width="190" height="42" class="box" stroke="#f97316"/>
+  <text x="1051" y="493" text-anchor="middle" class="box-title">Elasticsearch</text>
+  <text x="1051" y="510" text-anchor="middle" class="small">IK 分词 value_index</text>
+
+  <!-- Agent workflow layer -->
+  <rect x="24" y="552" width="1232" height="224" class="layer" fill="#f3e8ff" stroke="#9333ea"/>
+  <text x="48" y="586" class="layer-title">LangGraph 问数智能体层</text>
+  <rect x="60" y="622" width="150" height="54" class="box" stroke="#9333ea"/>
+  <text x="135" y="645" text-anchor="middle" class="box-title">extract_keywords</text>
+  <text x="135" y="664" text-anchor="middle" class="box-text">Jieba TF-IDF</text>
+  <rect x="256" y="604" width="160" height="48" class="box" stroke="#9333ea"/>
+  <text x="336" y="625" text-anchor="middle" class="box-title">recall_column</text>
+  <text x="336" y="643" text-anchor="middle" class="box-text">Qdrant + Embedding</text>
+  <rect x="256" y="664" width="160" height="48" class="box" stroke="#9333ea"/>
+  <text x="336" y="685" text-anchor="middle" class="box-title">recall_value</text>
+  <text x="336" y="703" text-anchor="middle" class="box-text">ES + IK 分词</text>
+  <rect x="256" y="724" width="160" height="48" class="box" stroke="#9333ea"/>
+  <text x="336" y="745" text-anchor="middle" class="box-title">recall_metric</text>
+  <text x="336" y="763" text-anchor="middle" class="box-text">Qdrant + 指标</text>
+  <rect x="470" y="650" width="170" height="54" class="box" stroke="#9333ea"/>
+  <text x="555" y="673" text-anchor="middle" class="box-title">merge_retrieved</text>
+  <text x="555" y="692" text-anchor="middle" class="box-text">合并召回信息</text>
+  <rect x="694" y="620" width="160" height="48" class="box" stroke="#9333ea"/>
+  <text x="774" y="641" text-anchor="middle" class="box-title">filter_table</text>
+  <text x="774" y="659" text-anchor="middle" class="box-text">LLM + 元数据</text>
+  <rect x="694" y="690" width="160" height="48" class="box" stroke="#9333ea"/>
+  <text x="774" y="711" text-anchor="middle" class="box-title">filter_metric</text>
+  <text x="774" y="729" text-anchor="middle" class="box-text">LLM + 指标上下文</text>
+  <rect x="904" y="622" width="150" height="54" class="box" stroke="#9333ea"/>
+  <text x="979" y="645" text-anchor="middle" class="box-title">generate_sql</text>
+  <text x="979" y="664" text-anchor="middle" class="box-text">Prompt + LLM</text>
+  <rect x="904" y="702" width="150" height="54" class="box" stroke="#9333ea"/>
+  <text x="979" y="725" text-anchor="middle" class="box-title">validate_sql</text>
+  <text x="979" y="744" text-anchor="middle" class="box-text">SQLAlchemy EXPLAIN</text>
+  <rect x="1094" y="622" width="130" height="54" class="box" stroke="#9333ea"/>
+  <text x="1159" y="645" text-anchor="middle" class="box-title">correct_sql</text>
+  <text x="1159" y="664" text-anchor="middle" class="box-text">LLM 纠错</text>
+  <rect x="1094" y="702" width="130" height="54" class="box" stroke="#9333ea"/>
+  <text x="1159" y="725" text-anchor="middle" class="box-title">run_sql</text>
+  <text x="1159" y="744" text-anchor="middle" class="box-text">DW MySQL 执行</text>
+
+  <!-- Data infrastructure layer -->
+  <rect x="24" y="800" width="1232" height="116" class="layer" fill="#f1f5f9" stroke="#475569"/>
+  <text x="48" y="834" class="layer-title">数据与基础设施层</text>
+  <rect x="72" y="858" width="170" height="38" class="box" stroke="#475569"/>
+  <text x="157" y="883" text-anchor="middle" class="box-text">TEI + BGE Embedding</text>
+  <rect x="282" y="858" width="170" height="38" class="box" stroke="#475569"/>
+  <text x="367" y="883" text-anchor="middle" class="box-text">Qdrant 向量库</text>
+  <rect x="492" y="858" width="170" height="38" class="box" stroke="#475569"/>
+  <text x="577" y="883" text-anchor="middle" class="box-text">Elasticsearch + IK</text>
+  <rect x="702" y="858" width="170" height="38" class="box" stroke="#475569"/>
+  <text x="787" y="883" text-anchor="middle" class="box-text">Meta MySQL + ORM</text>
+  <rect x="912" y="858" width="150" height="38" class="box" stroke="#475569"/>
+  <text x="987" y="883" text-anchor="middle" class="box-text">LLM + LangChain</text>
+  <rect x="1092" y="858" width="130" height="38" class="box" stroke="#475569"/>
+  <text x="1157" y="883" text-anchor="middle" class="box-text">DW MySQL 数仓</text>
+
+  <!-- User/API arrows -->
+  <path class="arrow-blue" d="M 522 150 L 590 150"/>
+  <path class="arrow-blue" d="M 695 178 L 695 282"/>
+  <path class="arrow-green" d="M 288 307 L 350 307"/>
+  <path class="arrow-green" d="M 560 307 L 622 307"/>
+  <path class="arrow-green" d="M 852 307 L 914 307"/>
+  <path class="arrow-green arrow-dash" d="M 1029 282 C 1110 238 1090 184 993 178"/>
+  <text x="1106" y="214" class="hint">SSE 实时返回</text>
+
+  <!-- Metadata build arrows -->
+  <path class="arrow-orange" d="M 256 463 L 306 463"/>
+  <path class="arrow-orange" d="M 526 463 L 576 463"/>
+  <path class="arrow-orange" d="M 816 448 L 866 438"/>
+  <path class="arrow-orange" d="M 816 463 L 1046 438"/>
+  <path class="arrow-orange" d="M 816 478 L 956 495"/>
+
+  <!-- Agent flow arrows -->
+  <path class="arrow-blue" d="M 1144 307 C 1230 350 1230 470 1230 552"/>
+  <text x="1128" y="546" class="hint">启动 graph.astream</text>
+  <path class="arrow-blue" d="M 210 649 C 230 624 236 628 256 628"/>
+  <path class="arrow-blue" d="M 210 649 L 256 688"/>
+  <path class="arrow-blue" d="M 210 649 C 230 720 236 748 256 748"/>
+  <path class="arrow-blue" d="M 416 628 C 438 642 448 660 470 677"/>
+  <path class="arrow-blue" d="M 416 688 L 470 677"/>
+  <path class="arrow-blue" d="M 416 748 C 438 720 448 694 470 677"/>
+  <path class="arrow-blue" d="M 640 677 C 664 650 674 644 694 644"/>
+  <path class="arrow-blue" d="M 640 677 C 664 704 674 714 694 714"/>
+  <path class="arrow-blue" d="M 854 644 C 876 644 884 644 904 649"/>
+  <path class="arrow-blue" d="M 854 714 C 876 704 884 688 904 649"/>
+  <path class="arrow-blue" d="M 979 676 L 979 702"/>
+  <path class="arrow-blue" d="M 1054 729 L 1094 729"/>
+  <path class="arrow-blue arrow-dash" d="M 1054 729 C 1080 700 1080 650 1094 649"/>
+  <path class="arrow-blue" d="M 1159 676 L 1159 702"/>
+
+  <!-- Infrastructure dependency arrows -->
+  <path class="arrow-slate arrow-dash" d="M 336 604 C 360 710 362 790 367 858"/>
+  <path class="arrow-slate arrow-dash" d="M 336 664 C 430 720 525 790 577 858"/>
+  <path class="arrow-slate arrow-dash" d="M 336 724 C 350 780 360 820 367 858"/>
+  <path class="arrow-slate arrow-dash" d="M 774 738 C 782 790 785 830 787 858"/>
+  <path class="arrow-slate arrow-dash" d="M 979 622 C 982 735 985 805 987 858"/>
+  <path class="arrow-slate arrow-dash" d="M 1159 756 C 1158 805 1157 835 1157 858"/>
+
+  <text x="58" y="538" class="small">构建链路：从教学数仓读取表结构和值域，根据配置写入 Meta MySQL、Qdrant 和 Elasticsearch</text>
+  <text x="58" y="790" class="small">查询链路：Jieba 先抽取关键词；LangChain/LLM 扩展检索词和生成 SQL；SQLAlchemy 校验执行；自定义 stream 事件推给 SSE</text>
+  <text x="58" y="934" class="small">工程依赖：后端用 uv 管理 Python 环境，前端用 pnpm 管理依赖，基础服务可通过 Docker Compose 启动</text>
+</svg>

@@ -1,0 +1,742 @@
+tables:
+  - name: dim_date
+    role: dim
+    grain: date
+    description: 日期维度表，用于描述下单日期和退款日期的年、季度、月份、周末和节日活动信息。
+    columns:
+      - name: date_id
+        role: primary_key
+        description: 日期唯一标识，格式为 yyyyMMdd，用于关联订单日期或退款日期。
+        alias: [日期ID, 日期编号, 时间ID]
+        sync: false
+
+      - name: date_value
+        role: dimension
+        description: 真实日期，表示自然日。
+        alias: [日期, 自然日, 具体日期]
+        sync: false
+
+      - name: year
+        role: dimension
+        description: 年份，例如 2025。
+        alias: [年, 年份]
+        sync: false
+
+      - name: quarter
+        role: dimension
+        description: 季度，例如 Q1、Q2、Q3、Q4。
+        alias: [季度, 季]
+        sync: true
+
+      - name: month
+        role: dimension
+        description: 月份，取值 1 到 12。
+        alias: [月, 月份]
+        sync: false
+
+      - name: day
+        role: dimension
+        description: 日期中的日，取值 1 到 31。
+        alias: [日, 天]
+        sync: false
+
+      - name: week_of_year
+        role: dimension
+        description: 一年中的第几周。
+        alias: [周, 年周, 第几周]
+        sync: false
+
+      - name: weekday
+        role: dimension
+        description: 星期几，1 表示星期一，7 表示星期日。
+        alias: [星期数字, 周几编号]
+        sync: false
+
+      - name: weekday_name
+        role: dimension
+        description: 星期名称，例如星期一、星期六。
+        alias: [星期, 周几, 星期名称]
+        sync: true
+
+      - name: is_weekend
+        role: dimension
+        description: 是否周末，1 表示周末，0 表示工作日。
+        alias: [是否周末, 周末, 工作日]
+        sync: false
+
+      - name: festival_name
+        role: dimension
+        description: 节日或促销活动名称，例如春节、618、双11、双12。
+        alias: [节日, 活动, 促销, 大促, 购物节]
+        sync: true
+
+  - name: dim_region
+    role: dim
+    grain: region
+    description: 地区维度表，用于描述订单发生的大区、省份、城市和城市等级。
+    columns:
+      - name: region_id
+        role: primary_key
+        description: 地区唯一标识。
+        alias: [地区ID, 区域ID]
+        sync: false
+
+      - name: region_name
+        role: dimension
+        description: 大区名称，例如华东、华南、华北、华中、西南、西北、东北。
+        alias: [地区, 区域, 大区, 片区]
+        sync: true
+
+      - name: province
+        role: dimension
+        description: 省份名称，例如上海市、广东省、浙江省。
+        alias: [省份, 省, 所在省份]
+        sync: true
+
+      - name: city
+        role: dimension
+        description: 城市名称，例如上海、广州、深圳、杭州。
+        alias: [城市, 市, 下单城市]
+        sync: true
+
+      - name: city_level
+        role: dimension
+        description: 城市等级，例如一线、新一线、二线、三线。
+        alias: [城市等级, 城市级别, 一线城市, 新一线城市, 二线城市]
+        sync: true
+
+      - name: country
+        role: dimension
+        description: 国家名称，当前默认中国。
+        alias: [国家, 国家名称]
+        sync: true
+
+  - name: dim_product
+    role: dim
+    grain: product
+    description: 商品维度表，用于描述商品名称、一级品类、二级品类、品牌和价格带。
+    columns:
+      - name: product_id
+        role: primary_key
+        description: 商品唯一标识。
+        alias: [商品ID, 产品ID]
+        sync: false
+
+      - name: product_name
+        role: dimension
+        description: 商品名称。
+        alias: [商品名称, 产品名称, SKU名称]
+        sync: true
+
+      - name: category_l1
+        role: dimension
+        description: 商品一级品类，例如数码、服饰、食品、美妆、家居、运动、母婴、图书。
+        alias: [一级品类, 品类, 商品品类, 大类]
+        sync: true
+
+      - name: category_l2
+        role: dimension
+        description: 商品二级品类，例如手机、女装、零食、护肤、厨具。
+        alias: [二级品类, 子品类, 商品小类, 分类]
+        sync: true
+
+      - name: brand
+        role: dimension
+        description: 商品品牌名称。
+        alias: [品牌, 品牌名称]
+        sync: true
+
+      - name: price_band
+        role: dimension
+        description: 商品价格带，例如低价、中价、高价。
+        alias: [价格带, 价格档位, 商品档位]
+        sync: true
+
+      - name: list_price
+        role: measure
+        description: 商品标价，是商品维度上的参考价格，不等同于订单实际成交金额。
+        alias: [标价, 商品价格, 参考价]
+        sync: false
+
+  - name: dim_member
+    role: dim
+    grain: member
+    description: 会员维度表，用于描述下单会员的会员等级、性别、年龄段、注册日期和会员阶段。
+    columns:
+      - name: member_id
+        role: primary_key
+        description: 会员唯一标识。
+        alias: [会员ID, 用户ID, 客户ID]
+        sync: false
+
+      - name: member_level
+        role: dimension
+        description: 会员等级，例如普通、银卡、金卡、铂金。
+        alias: [会员等级, 用户等级, 客户等级]
+        sync: true
+
+      - name: gender
+        role: dimension
+        description: 会员性别。
+        alias: [性别]
+        sync: true
+
+      - name: age_band
+        role: dimension
+        description: 会员年龄段，例如 18-24、25-34、35-44、45+。
+        alias: [年龄段, 年龄分层, 年龄区间]
+        sync: true
+
+      - name: register_date_id
+        role: foreign_key
+        description: 会员注册日期 ID，可关联日期维度表。
+        alias: [注册日期, 注册时间]
+        sync: false
+
+      - name: member_stage
+        role: dimension
+        description: 会员阶段，例如新客、老客、高价值、沉默。
+        alias: [用户阶段, 会员阶段, 新老客, 用户分层]
+        sync: true
+
+  - name: dim_channel
+    role: dim
+    grain: channel
+    description: 渠道维度表，用于描述订单来源渠道、渠道类型和是否付费渠道。
+    columns:
+      - name: channel_id
+        role: primary_key
+        description: 渠道唯一标识。
+        alias: [渠道ID, 来源ID]
+        sync: false
+
+      - name: channel_name
+        role: dimension
+        description: 渠道名称，例如 App、小程序、直播、搜索广告、信息流广告、自然流量、社群。
+        alias: [渠道, 来源渠道, 下单渠道, 流量来源]
+        sync: true
+
+      - name: channel_type
+        role: dimension
+        description: 渠道类型，例如自有渠道、付费渠道、内容渠道、自然渠道、私域渠道。
+        alias: [渠道类型, 来源类型, 流量类型]
+        sync: true
+
+      - name: is_paid
+        role: dimension
+        description: 是否付费渠道，1 表示付费渠道，0 表示非付费渠道。
+        alias: [是否付费渠道, 付费渠道, 免费渠道]
+        sync: false
+
+  - name: fact_order
+    role: fact
+    grain: order
+    description: 订单事实表，一行代表一笔订单，用于统计 GMV、实付金额、订单数、客单价、支付用户数等订单级指标。
+    columns:
+      - name: order_id
+        role: primary_key
+        description: 订单唯一标识。
+        alias: [订单ID, 订单编号]
+        sync: false
+
+      - name: date_id
+        role: foreign_key
+        description: 下单日期 ID，关联 dim_date.date_id。
+        alias: [下单日期, 订单日期, 成交日期]
+        sync: false
+
+      - name: member_id
+        role: foreign_key
+        description: 下单会员 ID，关联 dim_member.member_id。
+        alias: [会员ID, 用户ID, 客户ID]
+        sync: false
+
+      - name: region_id
+        role: foreign_key
+        description: 下单地区 ID，关联 dim_region.region_id。
+        alias: [地区ID, 区域ID]
+        sync: false
+
+      - name: channel_id
+        role: foreign_key
+        description: 下单渠道 ID，关联 dim_channel.channel_id。
+        alias: [渠道ID, 来源ID]
+        sync: false
+
+      - name: order_status
+        role: dimension
+        description: 订单状态，例如 paid、completed、partial_refunded、refunded、cancelled。经营指标默认排除 cancelled。
+        alias: [订单状态, 状态, 是否取消, 是否退款]
+        sync: true
+
+      - name: order_amount
+        role: measure
+        description: 订单原始成交金额，是 GMV、销售额、成交额的基础字段，默认排除已取消订单。
+        alias: [GMV, 销售额, 成交额, 订单金额, 销售金额]
+        sync: false
+
+      - name: discount_amount
+        role: measure
+        description: 订单优惠金额，由订单明细优惠汇总得到。
+        alias: [优惠金额, 折扣金额, 优惠]
+        sync: false
+
+      - name: pay_amount
+        role: measure
+        description: 用户实际支付金额，通常等于订单明细实付金额加运费，不同于 GMV。
+        alias: [实付金额, 支付金额, 实收金额, 实际支付]
+        sync: false
+
+      - name: shipping_amount
+        role: measure
+        description: 运费金额。
+        alias: [运费, 配送费, 物流费]
+        sync: false
+
+  - name: fact_order_item
+    role: fact
+    grain: order_item
+    description: 订单明细事实表，一行代表一笔订单中的一个商品明细，用于统计销量、商品销售额、品类销售额、件单价等商品粒度指标。
+    columns:
+      - name: item_id
+        role: primary_key
+        description: 订单明细唯一标识。
+        alias: [明细ID, 订单明细ID]
+        sync: false
+
+      - name: order_id
+        role: foreign_key
+        description: 所属订单 ID，关联 fact_order.order_id。
+        alias: [订单ID, 订单编号]
+        sync: false
+
+      - name: product_id
+        role: foreign_key
+        description: 商品 ID，关联 dim_product.product_id。
+        alias: [商品ID, 产品ID]
+        sync: false
+
+      - name: quantity
+        role: measure
+        description: 购买件数，是销量、销售件数、售出数量的基础字段。
+        alias: [销量, 销售件数, 售出数量, 购买件数, 销售数量]
+        sync: false
+
+      - name: item_amount
+        role: measure
+        description: 订单明细原始金额，适合用于商品、品类、品牌粒度的 GMV 或销售额统计。
+        alias: [明细金额, 商品销售额, 品类销售额, 商品GMV]
+        sync: false
+
+      - name: discount_amount
+        role: measure
+        description: 订单明细优惠金额。
+        alias: [明细优惠金额, 商品优惠金额, 折扣金额]
+        sync: false
+
+      - name: pay_amount
+        role: measure
+        description: 订单明细实际支付金额。
+        alias: [明细实付金额, 商品实付金额]
+        sync: false
+
+      - name: cost_amount
+        role: measure
+        description: 订单明细成本金额，可用于后续扩展毛利分析。
+        alias: [成本金额, 商品成本, 成本]
+        sync: false
+
+  - name: fact_refund
+    role: fact
+    grain: refund
+    description: 退款事实表，一行代表一次退款事件，用于统计退款金额、退款订单数、退款件数、退款率和退款原因。
+    columns:
+      - name: refund_id
+        role: primary_key
+        description: 退款唯一标识。
+        alias: [退款ID, 售后ID]
+        sync: false
+
+      - name: order_id
+        role: foreign_key
+        description: 关联订单 ID，关联 fact_order.order_id。
+        alias: [订单ID, 退款订单ID]
+        sync: false
+
+      - name: item_id
+        role: foreign_key
+        description: 关联订单明细 ID，关联 fact_order_item.item_id。
+        alias: [明细ID, 退款明细ID]
+        sync: false
+
+      - name: date_id
+        role: foreign_key
+        description: 退款日期 ID，关联 dim_date.date_id。退款金额等退款类指标默认按退款日期过滤。
+        alias: [退款日期, 售后日期, 退货日期]
+        sync: false
+
+      - name: refund_amount
+        role: measure
+        description: 退款金额，是退款金额、售后金额、退款总额的基础字段。
+        alias: [退款金额, 售后金额, 退款总额, 退货金额]
+        sync: false
+
+      - name: refund_quantity
+        role: measure
+        description: 退款件数，是商品退款率、品类退款率的分子字段。
+        alias: [退款件数, 退货件数, 售后件数, 退款数量]
+        sync: false
+
+      - name: refund_reason
+        role: dimension
+        description: 退款原因，例如尺码不合适、质量问题、七天无理由、物流慢、描述不符。
+        alias: [退款原因, 售后原因, 退货原因]
+        sync: true
+
+      - name: refund_status
+        role: dimension
+        description: 退款状态，例如 success、processing、rejected。退款指标默认只统计 success。
+        alias: [退款状态, 售后状态, 是否退款成功]
+        sync: true
+
+relations:
+  - left_table: fact_order
+    left_column: date_id
+    right_table: dim_date
+    right_column: date_id
+    relation_type: many_to_one
+    description: 订单事实表通过下单日期 ID 关联日期维表。
+
+  - left_table: fact_order
+    left_column: region_id
+    right_table: dim_region
+    right_column: region_id
+    relation_type: many_to_one
+    description: 订单事实表通过地区 ID 关联地区维表。
+
+  - left_table: fact_order
+    left_column: member_id
+    right_table: dim_member
+    right_column: member_id
+    relation_type: many_to_one
+    description: 订单事实表通过会员 ID 关联会员维表。
+
+  - left_table: fact_order
+    left_column: channel_id
+    right_table: dim_channel
+    right_column: channel_id
+    relation_type: many_to_one
+    description: 订单事实表通过渠道 ID 关联渠道维表。
+
+  - left_table: fact_order_item
+    left_column: order_id
+    right_table: fact_order
+    right_column: order_id
+    relation_type: many_to_one
+    description: 订单明细事实表通过订单 ID 关联订单事实表。
+
+  - left_table: fact_order_item
+    left_column: product_id
+    right_table: dim_product
+    right_column: product_id
+    relation_type: many_to_one
+    description: 订单明细事实表通过商品 ID 关联商品维表。
+
+  - left_table: fact_refund
+    left_column: order_id
+    right_table: fact_order
+    right_column: order_id
+    relation_type: many_to_one
+    description: 退款事实表通过订单 ID 关联订单事实表。
+
+  - left_table: fact_refund
+    left_column: item_id
+    right_table: fact_order_item
+    right_column: item_id
+    relation_type: many_to_one
+    description: 退款事实表通过订单明细 ID 关联订单明细事实表。
+
+  - left_table: fact_refund
+    left_column: date_id
+    right_table: dim_date
+    right_column: date_id
+    relation_type: many_to_one
+    description: 退款事实表通过退款日期 ID 关联日期维表。
+
+metrics:
+  - name: GMV
+    description: 有效订单的原始成交金额总和，默认排除 cancelled 订单，使用 fact_order.order_amount 求和，不扣优惠，不扣退款。
+    default_variant: order_gmv
+    variants:
+      - name: order_gmv
+        grain: order
+        base_table: fact_order
+        formula: "SUM(fact_order.order_amount)"
+        default_filters:
+          - "fact_order.order_status <> 'cancelled'"
+        suitable_dimensions: [dim_date, dim_region, dim_channel, dim_member]
+        relevant_columns:
+          - fact_order.order_amount
+          - fact_order.order_status
+      - name: item_gmv
+        grain: order_item
+        base_table: fact_order_item
+        formula: "SUM(fact_order_item.item_amount)"
+        default_filters:
+          - "fact_order.order_status <> 'cancelled'"
+        suitable_dimensions: [dim_product, dim_date, dim_region, dim_channel, dim_member]
+        relevant_columns:
+          - fact_order_item.item_amount
+          - fact_order_item.order_id
+          - fact_order_item.product_id
+          - fact_order.order_id
+          - fact_order.order_status
+    alias: [销售额, 成交额, 成交总额, 订单金额, 销售金额]
+
+  - name: 实付金额
+    description: 用户实际支付金额总和，默认排除 cancelled 订单，使用 fact_order.pay_amount 求和，区别于 GMV。
+    default_variant: order_pay_amount
+    variants:
+      - name: order_pay_amount
+        grain: order
+        base_table: fact_order
+        formula: "SUM(fact_order.pay_amount)"
+        default_filters:
+          - "fact_order.order_status <> 'cancelled'"
+        suitable_dimensions: [dim_date, dim_region, dim_channel, dim_member]
+        relevant_columns:
+          - fact_order.pay_amount
+          - fact_order.order_status
+      - name: item_pay_amount
+        grain: order_item
+        base_table: fact_order_item
+        formula: "SUM(fact_order_item.pay_amount)"
+        default_filters:
+          - "fact_order.order_status <> 'cancelled'"
+        suitable_dimensions: [dim_product, dim_date, dim_region, dim_channel, dim_member]
+        relevant_columns:
+          - fact_order_item.pay_amount
+          - fact_order_item.order_id
+          - fact_order_item.product_id
+          - fact_order.order_id
+          - fact_order.order_status
+    alias: [支付金额, 实收金额, 实际支付金额, 实付销售额]
+
+  - name: 订单数
+    description: 有效订单数量，默认排除 cancelled 订单，使用 COUNT DISTINCT fact_order.order_id 统计。
+    default_variant: order_count
+    variants:
+      - name: order_count
+        grain: order
+        base_table: fact_order
+        formula: "COUNT(DISTINCT fact_order.order_id)"
+        default_filters:
+          - "fact_order.order_status <> 'cancelled'"
+        suitable_dimensions: [dim_date, dim_region, dim_channel, dim_member]
+        relevant_columns:
+          - fact_order.order_id
+          - fact_order.order_status
+      - name: item_order_count
+        grain: order_item
+        base_table: fact_order_item
+        formula: "COUNT(DISTINCT fact_order_item.order_id)"
+        default_filters:
+          - "fact_order.order_status <> 'cancelled'"
+        suitable_dimensions: [dim_product, dim_date, dim_region, dim_channel, dim_member]
+        relevant_columns:
+          - fact_order_item.order_id
+          - fact_order_item.product_id
+          - fact_order.order_id
+          - fact_order.order_status
+    alias: [订单量, 下单数, 成交订单数, 订单数量]
+
+  - name: 销量
+    description: 有效订单中售出的商品件数，使用 fact_order_item.quantity 求和，需要关联 fact_order 并排除 cancelled 订单。
+    default_variant: item_quantity
+    variants:
+      - name: item_quantity
+        grain: order_item
+        base_table: fact_order_item
+        formula: "SUM(fact_order_item.quantity)"
+        default_filters:
+          - "fact_order.order_status <> 'cancelled'"
+        suitable_dimensions: [dim_product, dim_date, dim_region, dim_channel, dim_member]
+        relevant_columns:
+          - fact_order_item.quantity
+          - fact_order_item.order_id
+          - fact_order_item.product_id
+          - fact_order.order_id
+          - fact_order.order_status
+    alias: [销售件数, 售出数量, 商品销量, 购买件数, 销售数量]
+
+  - name: 支付用户数
+    description: 发生有效下单行为的去重会员数，默认排除 cancelled 订单，使用 COUNT DISTINCT fact_order.member_id 统计。
+    default_variant: paid_member_count
+    variants:
+      - name: paid_member_count
+        grain: order
+        base_table: fact_order
+        formula: "COUNT(DISTINCT fact_order.member_id)"
+        default_filters:
+          - "fact_order.order_status <> 'cancelled'"
+        suitable_dimensions: [dim_date, dim_region, dim_channel, dim_member]
+        relevant_columns:
+          - fact_order.member_id
+          - fact_order.order_status
+    alias: [购买用户数, 成交用户数, 下单用户数, 付费用户数, 支付会员数]
+
+  - name: 客单价
+    description: 平均每笔有效订单的成交金额，计算公式为 GMV 除以订单数，即 SUM(fact_order.order_amount) / COUNT DISTINCT fact_order.order_id。
+    default_variant: order_aov
+    variants:
+      - name: order_aov
+        grain: order
+        base_table: fact_order
+        formula: "SUM(fact_order.order_amount) / NULLIF(COUNT(DISTINCT fact_order.order_id), 0)"
+        default_filters:
+          - "fact_order.order_status <> 'cancelled'"
+        suitable_dimensions: [dim_date, dim_region, dim_channel, dim_member]
+        relevant_columns:
+          - fact_order.order_amount
+          - fact_order.order_id
+          - fact_order.order_status
+      - name: item_aov
+        grain: order_item
+        base_table: fact_order_item
+        formula: "SUM(fact_order_item.item_amount) / NULLIF(COUNT(DISTINCT fact_order_item.order_id), 0)"
+        default_filters:
+          - "fact_order.order_status <> 'cancelled'"
+        suitable_dimensions: [dim_product, dim_date, dim_region, dim_channel, dim_member]
+        relevant_columns:
+          - fact_order_item.item_amount
+          - fact_order_item.order_id
+          - fact_order_item.product_id
+          - fact_order.order_id
+          - fact_order.order_status
+    alias: [AOV, 平均订单金额, 平均客单价, 每单金额]
+
+  - name: 人均消费
+    description: 平均每个支付用户贡献的成交金额，计算公式为 GMV 除以支付用户数，即 SUM(fact_order.order_amount) / COUNT DISTINCT fact_order.member_id。
+    default_variant: member_avg_amount
+    variants:
+      - name: member_avg_amount
+        grain: order
+        base_table: fact_order
+        formula: "SUM(fact_order.order_amount) / NULLIF(COUNT(DISTINCT fact_order.member_id), 0)"
+        default_filters:
+          - "fact_order.order_status <> 'cancelled'"
+        suitable_dimensions: [dim_date, dim_region, dim_channel, dim_member]
+        relevant_columns:
+          - fact_order.order_amount
+          - fact_order.member_id
+          - fact_order.order_status
+    alias: [客均消费, ARPPU, 人均GMV, 人均成交额]
+
+  - name: 件单价
+    description: 平均每件商品的成交金额，计算公式为订单明细金额除以销量，即 SUM(fact_order_item.item_amount) / SUM(fact_order_item.quantity)。
+    default_variant: item_unit_price
+    variants:
+      - name: item_unit_price
+        grain: order_item
+        base_table: fact_order_item
+        formula: "SUM(fact_order_item.item_amount) / NULLIF(SUM(fact_order_item.quantity), 0)"
+        default_filters:
+          - "fact_order.order_status <> 'cancelled'"
+        suitable_dimensions: [dim_product, dim_date, dim_region, dim_channel, dim_member]
+        relevant_columns:
+          - fact_order_item.item_amount
+          - fact_order_item.quantity
+          - fact_order_item.order_id
+          - fact_order_item.product_id
+          - fact_order.order_id
+          - fact_order.order_status
+    alias: [平均件单价, 单件均价, 商品均价]
+
+  - name: 退款金额
+    description: 成功退款的金额总和，默认只统计 refund_status 为 success 的记录，使用 fact_refund.refund_amount 求和。
+    default_variant: refund_amount
+    variants:
+      - name: refund_amount
+        grain: refund
+        base_table: fact_refund
+        formula: "SUM(fact_refund.refund_amount)"
+        default_filters:
+          - "fact_refund.refund_status = 'success'"
+        suitable_dimensions: [dim_product, dim_date, dim_region, dim_channel, dim_member]
+        relevant_columns:
+          - fact_refund.refund_amount
+          - fact_refund.refund_status
+    alias: [售后金额, 退款总额, 退货金额]
+
+  - name: 退款订单数
+    description: 发生成功退款的去重订单数量，默认只统计 refund_status 为 success 的记录，使用 COUNT DISTINCT fact_refund.order_id。
+    default_variant: refund_order_count
+    variants:
+      - name: refund_order_count
+        grain: refund
+        base_table: fact_refund
+        formula: "COUNT(DISTINCT fact_refund.order_id)"
+        default_filters:
+          - "fact_refund.refund_status = 'success'"
+        suitable_dimensions: [dim_date, dim_region, dim_channel, dim_member]
+        relevant_columns:
+          - fact_refund.order_id
+          - fact_refund.refund_status
+    alias: [售后订单数, 退款单数, 退货订单数]
+
+  - name: 退款件数
+    description: 成功退款的商品件数，默认只统计 refund_status 为 success 的记录，使用 fact_refund.refund_quantity 求和。
+    default_variant: refund_quantity
+    variants:
+      - name: refund_quantity
+        grain: refund
+        base_table: fact_refund
+        formula: "SUM(fact_refund.refund_quantity)"
+        default_filters:
+          - "fact_refund.refund_status = 'success'"
+        suitable_dimensions: [dim_product, dim_date, dim_region, dim_channel, dim_member]
+        relevant_columns:
+          - fact_refund.refund_quantity
+          - fact_refund.refund_status
+    alias: [退货件数, 售后件数, 退款数量]
+
+  - name: 订单退款率
+    description: 发生成功退款的订单数占有效订单数的比例，分子为 COUNT DISTINCT fact_refund.order_id，分母为 COUNT DISTINCT fact_order.order_id。
+    default_variant: order_refund_rate
+    variants:
+      - name: order_refund_rate
+        grain: order
+        base_table: fact_order
+        formula: "COUNT(DISTINCT fact_refund.order_id) / NULLIF(COUNT(DISTINCT fact_order.order_id), 0)"
+        default_filters:
+          - "fact_order.order_status <> 'cancelled'"
+          - "fact_refund.refund_status = 'success'"
+        suitable_dimensions: [dim_date, dim_region, dim_channel, dim_member]
+        relevant_columns:
+          - fact_refund.order_id
+          - fact_refund.refund_status
+          - fact_order.order_id
+          - fact_order.order_status
+    alias: [退款率, 售后率, 订单售后率, 退货率]
+
+  - name: 件数退款率
+    description: 成功退款件数占销售件数的比例，适合商品、品牌、品类维度分析，分子为 SUM(fact_refund.refund_quantity)，分母为 SUM(fact_order_item.quantity)。
+    default_variant: quantity_refund_rate
+    variants:
+      - name: quantity_refund_rate
+        grain: order_item
+        base_table: fact_order_item
+        formula: "SUM(fact_refund.refund_quantity) / NULLIF(SUM(fact_order_item.quantity), 0)"
+        default_filters:
+          - "fact_order.order_status <> 'cancelled'"
+          - "fact_refund.refund_status = 'success'"
+        suitable_dimensions: [dim_product, dim_date, dim_region, dim_channel, dim_member]
+        relevant_columns:
+          - fact_refund.refund_quantity
+          - fact_refund.refund_status
+          - fact_order_item.quantity
+          - fact_order_item.item_id
+          - fact_order_item.order_id
+          - fact_order.order_id
+          - fact_order.order_status
+    alias: [商品退款率, 品类退款率, 退货件数占比]

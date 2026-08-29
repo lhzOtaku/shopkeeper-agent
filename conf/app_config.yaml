@@ -1,0 +1,46 @@
+logging:
+  file:
+    enable: true
+    level: INFO
+    path: logs
+    rotation: "10 MB"
+    retention: "7 days"
+  console:
+    enable: true
+    level: INFO
+
+db_meta:
+  host: localhost
+  port: 3307
+  user: ${oc.env:MYSQL_USER}
+  password: ${oc.env:MYSQL_PASSWORD}
+  database: meta_v2
+
+db_dw:
+  host: localhost
+  port: 3307
+  user: ${oc.env:MYSQL_USER}
+  password: ${oc.env:MYSQL_PASSWORD}
+  database: dw_v2
+
+qdrant:
+  host: 127.0.0.1
+  port: 6333
+  embedding_size: 1024
+  column_collection_name: column_info_collection_v2
+  metric_collection_name: metric_info_collection_v2
+
+embedding:
+  host: 127.0.0.1
+  port: 8081
+  model: BAAI/bge-large-zh-v1.5
+
+es:
+  host: localhost
+  port: 9200
+  index_name: value_index_v2
+
+llm:
+  model_name: deepseek-v4-flash
+  api_key: ${oc.env:DEEPSEEK_API_KEY}
+  base_url: https://api.deepseek.com

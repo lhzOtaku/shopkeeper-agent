@@ -1,0 +1,25 @@
+你只负责把下面的模型输出修复为符合指定结构的合法 JSON，不重新解释或扩展业务语义。
+
+允许的 status：resolved、independent、clarify、cancelled、chat。
+
+字段规则：
+- resolved/independent：resolved_query 必须非空；candidate_resolved_query 和 clarification_question 必须为 null。
+- clarify：resolved_query 必须为 null；clarification_question 必须非空；candidate_resolved_query 可以为 null。
+- cancelled/chat：三个问题字段都必须为 null。
+- reason 必须是非空的简短字符串。
+- 禁止未知字段。
+
+原始输出：
+{raw_output}
+
+校验错误：
+{validation_error}
+
+只输出：
+{{
+  "status": "resolved | independent | clarify | cancelled | chat",
+  "resolved_query": "完整问题或null",
+  "candidate_resolved_query": "候选问题或null",
+  "clarification_question": "澄清问题或null",
+  "reason": "简短原因"
+}}
