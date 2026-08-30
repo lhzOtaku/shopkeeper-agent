@@ -41,7 +41,7 @@
                         mainAgent 继续
 
 ┌─────────────────────────────────────────────────────────────────────┐
-│  底层：data_query_graph (13 节点 · app/agent/graph.py)              │
+│  底层：data_query_graph (14 节点 · app/agents/ask_agent/graph.py)  │
 └─────────────────────────────────────────────────────────────────────┘
 
   START → extract_keywords
@@ -64,7 +64,9 @@
         │   │
         └───┘
             ▼
-    add_extra_context
+    select_metric_variant
+            ▼
+    enrich_generation_context
             ▼
     generate_sql (LLM)
             ▼

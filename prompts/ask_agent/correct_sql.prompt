@@ -15,6 +15,8 @@ SQL 生成前的最终结构化上下文如下：
 2. generation_context.tables 是程序补齐后的最终可用表字段范围，修正 SQL 时只能使用这里提供的表和字段。
 3. generation_context.value_bindings 是用户问题中真实字段值和字段的绑定关系；如果 WHERE 枚举值相关 SQL 有误，必须优先按这里的 table_id.column_name = value 修正。
 4. generation_context.join_relations 是 Meta MySQL 中维护的稳定 Join 关系；修正 JOIN 时必须优先使用这里的 join_condition。
+5. generation_context.date_info 是当前日期、星期和季度；修正相对时间条件时必须保持原始时间语义。
+6. generation_context.db_info 是目标数据库方言和版本；修正后的函数和语法必须与其兼容。
 
 指标口径约束：
 1. 如果某个指标包含 selected_variant，修正后的 SQL 必须继续使用 selected_variant.formula。
@@ -22,15 +24,9 @@ SQL 生成前的最终结构化上下文如下：
 3. 不得因为修正语法错误而替换 selected_variant 中指定的金额、数量、订单、退款字段。
 4. generation_context 之外的指标公式一律不可使用或猜测。
 
-当前的时间信息如下：
 状态维度输出约束：
 1. 如果用户问题要求对比同一个枚举/状态字段下的多个取值，例如“成功退款和处理中退款的退款金额”，修正后的 SQL 应把状态字段作为结果维度输出，例如 SELECT refund_status AS 退款状态, SUM(refund_amount) AS 退款金额 ... WHERE refund_status IN ('success','processing') GROUP BY refund_status。
 2. 除非用户明确要求“横向列展示”或“分别作为两列”，不要把多个状态取值写成多个 SUM(CASE WHEN status = ... THEN ... END) 列；这种写法会丢失状态维度，不利于稳定评测和后续分析。
-
-{date_info}
-
-数据库环境如下：
-{db_info}
 
 原始用户查询如下：
 {query}

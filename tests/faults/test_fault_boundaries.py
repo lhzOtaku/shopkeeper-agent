@@ -2,10 +2,10 @@ from unittest.mock import AsyncMock
 
 import pytest
 
+from app.agents.ask_agent.adapter import AskAgentAdapter
 from app.agents.ask_agent.nodes.correct_sql import correct_sql
 from app.agents.ask_agent.nodes.fail_sql_correction import fail_sql_correction
 from app.agents.ask_agent.nodes.generate_sql import generate_sql
-from app.agents.ask_agent.adapter import AskAgentAdapter
 
 pytestmark = [pytest.mark.unit, pytest.mark.node]
 
@@ -22,9 +22,10 @@ async def test_generate_sql_initializes_correction_and_safety_state(
         {
             "query": "统计订单数",
             "table_infos": [],
-            "generation_context": {},
-            "date_info": {"date": "2026-07-22"},
-            "db_info": {"dialect": "mysql", "version": "8.0"},
+            "generation_context": {
+                "date_info": {"date": "2026-07-22"},
+                "db_info": {"dialect": "mysql", "version": "8.0"},
+            },
         },
         runtime,
     )
@@ -48,8 +49,7 @@ async def test_generate_sql_llm_timeout_propagates_and_emits_error_progress(
             {
                 "query": "q",
                 "table_infos": [],
-                "date_info": {},
-                "db_info": {},
+                "generation_context": {},
             },
             runtime,
         )
@@ -69,8 +69,6 @@ async def test_correct_sql_increments_count_and_keeps_audit_record(
             "query": "订单",
             "table_infos": [],
             "generation_context": {},
-            "date_info": {},
-            "db_info": {},
             "sql": "SELECT missing FROM fact_order",
             "original_sql": "SELECT missing FROM fact_order",
             "error": "Unknown column",

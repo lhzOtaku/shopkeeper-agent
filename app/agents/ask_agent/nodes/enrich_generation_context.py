@@ -6,10 +6,12 @@
 - Meta 表粒度 -> enriched tables
 - Meta 表关系 -> join_relations
 - Metric selected_variant -> selected metric specs and required columns
+- 当前日期和 DW 数据库信息 -> date_info and db_info
 """
 
 import re
 from collections import defaultdict
+from datetime import date
 
 from langgraph.runtime import Runtime
 
@@ -17,6 +19,8 @@ from app.agents.ask_agent.context import DataAgentContext
 from app.agents.ask_agent.state import (
     ColumnInfoState,
     DataAgentState,
+    DateInfoState,
+    DBInfoState,
     GenerationContextState,
     MetricInfoState,
     TableInfoState,
@@ -176,6 +180,7 @@ async def enrich_generation_context(
         table_infos = state.get("table_infos", [])
         retrieved_value_infos = state.get("retrieved_value_infos", [])
         meta_mysql_repository = runtime.context["meta_mysql_repository"]
+        dw_mysql_repository = runtime.context["dw_mysql_repository"]
 
         table_meta_map: dict[str, TableInfo] = {}
         table_columns_map: dict[str, dict[str, ColumnInfoState]] = defaultdict(dict)
@@ -265,18 +270,30 @@ async def enrich_generation_context(
             for table_id in sorted(table_meta_map)
         ]
 
+        today = date.today()
+        date_info = DateInfoState(
+            date=today.strftime("%Y-%m-%d"),
+            weekday=today.strftime("%A"),
+            quarter=f"Q{(today.month - 1) // 3 + 1}",
+        )
+        db_info = DBInfoState(**(await dw_mysql_repository.get_db_info()))
+
         generation_context = GenerationContextState(
             metrics=metric_specs,
             tables=enriched_table_infos,
             value_bindings=list(value_bindings_map.values()),
             join_relations=relation_states,
+            date_info=date_info,
+            db_info=db_info,
         )
 
         logger.info(
             "生成上下文补齐完成："
             f"tables={table_ids}, "
             f"values={[(v['column_id'], v['value']) for v in generation_context['value_bindings']]}, "
-            f"joins={[j['join_condition'] for j in generation_context['join_relations']]}"
+            f"joins={[j['join_condition'] for j in generation_context['join_relations']]}, "
+            f"date={date_info['date']}, "
+            f"db={db_info['dialect']} {db_info['version']}"
         )
         writer({"type": "progress", "step": step, "status": "success"})
         return {
