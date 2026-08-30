@@ -33,8 +33,6 @@ async def generate_sql(state: DataAgentState, runtime: Runtime[DataAgentContext]
     try:
         table_infos = state["table_infos"]
         generation_context = state.get("generation_context", {})
-        date_info = state["date_info"]
-        db_info = state["db_info"]
         query = state["query"]
 
         prompt = PromptTemplate(
@@ -42,8 +40,6 @@ async def generate_sql(state: DataAgentState, runtime: Runtime[DataAgentContext]
             input_variables=[
                 "table_infos",
                 "generation_context",
-                "date_info",
-                "db_info",
                 "query",
             ],
         )
@@ -60,8 +56,6 @@ async def generate_sql(state: DataAgentState, runtime: Runtime[DataAgentContext]
             "generation_context": yaml.dump(
                 generation_context, allow_unicode=True, sort_keys=False
             ),
-            "date_info": yaml.dump(date_info, allow_unicode=True, sort_keys=False),
-            "db_info": yaml.dump(db_info, allow_unicode=True, sort_keys=False),
             "query": query,
         }
 

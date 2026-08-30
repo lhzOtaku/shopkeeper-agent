@@ -18,7 +18,7 @@ def edge_pairs(compiled_graph):
     return {(edge.source, edge.target) for edge in compiled_graph.get_graph().edges}
 
 
-def test_ask_graph_contains_the_real_fifteen_nodes():
+def test_ask_graph_contains_the_real_fourteen_nodes():
     nodes = set(ask_graph.get_graph().nodes)
     assert {
         "extract_keywords",
@@ -30,13 +30,13 @@ def test_ask_graph_contains_the_real_fifteen_nodes():
         "filter_metric",
         "select_metric_variant",
         "enrich_generation_context",
-        "add_extra_context",
         "generate_sql",
         "validate_sql",
         "correct_sql",
         "run_sql",
         "fail_sql_correction",
     } <= nodes
+    assert "add_extra_context" not in nodes
 
 
 def test_ask_graph_fans_out_three_recall_branches_and_fans_in():
@@ -52,6 +52,12 @@ def test_ask_graph_joins_table_and_metric_filters_before_variant_selection():
     assert ("merge_retrieved_info", "filter_metric") in edges
     assert ("filter_table", "select_metric_variant") in edges
     assert ("filter_metric", "select_metric_variant") in edges
+
+
+def test_enriched_context_flows_directly_to_sql_generation():
+    edges = edge_pairs(ask_graph)
+    assert ("select_metric_variant", "enrich_generation_context") in edges
+    assert ("enrich_generation_context", "generate_sql") in edges
 
 
 def test_sql_correction_has_a_real_back_edge_to_validation():

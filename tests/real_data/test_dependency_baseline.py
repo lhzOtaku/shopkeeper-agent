@@ -2,7 +2,9 @@ from types import SimpleNamespace
 
 import pytest
 
-from app.agents.ask_agent.nodes.enrich_generation_context import enrich_generation_context
+from app.agents.ask_agent.nodes.enrich_generation_context import (
+    enrich_generation_context,
+)
 from app.conf.app_config import app_config
 
 pytestmark = [pytest.mark.integration, pytest.mark.real_data]
@@ -249,7 +251,10 @@ async def test_four_sources_can_form_one_generation_context(real_repositories):
         "retrieved_value_infos": [category],
     }
     runtime = SimpleNamespace(
-        context={"meta_mysql_repository": real_repositories.meta},
+        context={
+            "meta_mysql_repository": real_repositories.meta,
+            "dw_mysql_repository": real_repositories.dw,
+        },
         stream_writer=lambda _event: None,
     )
     result = await enrich_generation_context(state, runtime)
@@ -260,6 +265,8 @@ async def test_four_sources_can_form_one_generation_context(real_repositories):
         "fact_order_item",
         "dim_product",
     }
+    assert context["db_info"]["dialect"] == "mysql"
+    assert context["date_info"]["quarter"].startswith("Q")
 
 
 async def test_real_sql_explain_and_execution_are_separate_checks(real_repositories):

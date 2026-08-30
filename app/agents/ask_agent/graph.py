@@ -5,11 +5,11 @@
 当前链路已经落地关键词抽取和多路召回，字段和指标走 Qdrant 向量检索，字段取值走 ES 全文检索
 整体流程先抽取用户问题关键词，再并行召回字段 字段取值和指标信息，
 随后合并召回结果 过滤候选表和指标，为每个指标选择最优计算口径，
-补充生成上下文和额外信息，最后生成 校验 循环修正并执行 SQL
+统一补充生成上下文，最后生成 校验 循环修正并执行 SQL
 
 ┌─────────────────────────────────────────────────────────────────────┐
 │                        Data Query Agent Graph                       │
-│                         (15 Nodes · 指标口径 · 修正循环)             │
+│                         (14 Nodes · 指标口径 · 修正循环)             │
 └─────────────────────────────────────────────────────────────────────┘
 
                                     START
@@ -55,13 +55,7 @@
                             ┌──────────────────┐
                             │ enrich_          │  ← 补充表关系/
                             │ generation_      │    粒度信息/Join路径
-                            │   context        │
-                            └────────┬─────────┘
-                                      │
-                                      ▼
-                            ┌──────────────────┐
-                            │ add_extra_       │  ← 注入日期/DB
-                            │   context        │     方言/版本
+                            │   context        │    日期/DB环境
                             └────────┬─────────┘
                                       │
                                       ▼
@@ -99,7 +93,6 @@ from langgraph.constants import END, START
 from langgraph.graph import StateGraph
 
 from app.agents.ask_agent.context import DataAgentContext
-from app.agents.ask_agent.nodes.add_extra_context import add_extra_context
 from app.agents.ask_agent.nodes.correct_sql import correct_sql
 from app.agents.ask_agent.nodes.enrich_generation_context import (
     enrich_generation_context,
@@ -157,7 +150,6 @@ graph_builder.add_node("filter_metric", filter_metric)
 graph_builder.add_node("filter_table", filter_table)
 graph_builder.add_node("select_metric_variant", select_metric_variant)
 graph_builder.add_node("enrich_generation_context", enrich_generation_context)
-graph_builder.add_node("add_extra_context", add_extra_context)
 graph_builder.add_node("generate_sql", generate_sql)
 graph_builder.add_node("validate_sql", validate_sql)
 graph_builder.add_node("correct_sql", correct_sql)
@@ -185,8 +177,7 @@ graph_builder.add_edge("merge_retrieved_info", "filter_metric")
 graph_builder.add_edge("filter_table", "select_metric_variant")
 graph_builder.add_edge("filter_metric", "select_metric_variant")
 graph_builder.add_edge("select_metric_variant", "enrich_generation_context")
-graph_builder.add_edge("enrich_generation_context", "add_extra_context")
-graph_builder.add_edge("add_extra_context", "generate_sql")
+graph_builder.add_edge("enrich_generation_context", "generate_sql")
 graph_builder.add_edge("generate_sql", "validate_sql")
 
 # SQL 校验通过才执行；校验失败则进入修正节点，修正后必须重新校验

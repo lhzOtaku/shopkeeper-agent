@@ -3,8 +3,9 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from app.agents.ask_agent.nodes.add_extra_context import add_extra_context
-from app.agents.ask_agent.nodes.enrich_generation_context import enrich_generation_context
+from app.agents.ask_agent.nodes.enrich_generation_context import (
+    enrich_generation_context,
+)
 from app.agents.ask_agent.nodes.extract_keywords import extract_keywords
 from app.agents.ask_agent.nodes.filter_metric import filter_metric
 from app.agents.ask_agent.nodes.filter_table import filter_table
@@ -330,7 +331,12 @@ async def test_enrich_context_adds_meta_columns_relations_and_strong_value_bindi
     ]
     metric = entity_factory.metric()
     selected = asdict(metric.variants[1])
-    runtime, _ = event_runtime(meta_mysql_repository=meta)
+    dw = AsyncMock()
+    dw.get_db_info.return_value = {"dialect": "mysql", "version": "8.0"}
+    runtime, _ = event_runtime(
+        meta_mysql_repository=meta,
+        dw_mysql_repository=dw,
+    )
     result = await enrich_generation_context(
         {
             "query": "统计女装商品销售额",
@@ -369,17 +375,8 @@ async def test_enrich_context_adds_meta_columns_relations_and_strong_value_bindi
         "fact_order_item",
         "dim_product",
     }
-
-
-async def test_add_extra_context_calls_dw_repository_only(
-    event_runtime
-):
-    dw = AsyncMock()
-    dw.get_db_info.return_value = {"dialect": "mysql", "version": "8.0"}
-    runtime, _ = event_runtime(dw_mysql_repository=dw)
-    result = await add_extra_context({}, runtime)
-    assert result["db_info"] == {"dialect": "mysql", "version": "8.0"}
-    assert result["date_info"]["quarter"].startswith("Q")
+    assert context["db_info"] == {"dialect": "mysql", "version": "8.0"}
+    assert context["date_info"]["quarter"].startswith("Q")
     dw.get_db_info.assert_awaited_once()
 
 

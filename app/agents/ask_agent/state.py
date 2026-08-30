@@ -78,15 +78,6 @@ class TableRelationState(TypedDict, total=False):
     join_condition: str
 
 
-class GenerationContextState(TypedDict, total=False):
-    """Final structured context merged from Meta/Qdrant/ES."""
-
-    metrics: list[MetricInfoState]
-    tables: list[TableInfoState]
-    value_bindings: list[ValueBindingState]
-    join_relations: list[TableRelationState]
-
-
 class DateInfoState(TypedDict, total=False):
     """Current date context for SQL generation."""
 
@@ -102,6 +93,17 @@ class DBInfoState(TypedDict, total=False):
     version: str
 
 
+class GenerationContextState(TypedDict, total=False):
+    """Final structured context for SQL generation and correction."""
+
+    metrics: list[MetricInfoState]
+    tables: list[TableInfoState]
+    value_bindings: list[ValueBindingState]
+    join_relations: list[TableRelationState]
+    date_info: DateInfoState
+    db_info: DBInfoState
+
+
 class DataAgentState(TypedDict, total=False):
     """Shared state for one data-query graph execution."""
 
@@ -115,8 +117,6 @@ class DataAgentState(TypedDict, total=False):
     table_infos: list[TableInfoState]
     metric_infos: list[MetricInfoState]
     generation_context: GenerationContextState
-    date_info: DateInfoState
-    db_info: DBInfoState
 
     sql: str
     original_sql: str
